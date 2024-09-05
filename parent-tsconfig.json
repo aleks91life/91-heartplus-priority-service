@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./dist",
+    "jsx": "react",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "lib": ["es2020"]
+  },
+  "paths": {
+    "@arhm/*": ["./packages/*/"]
+  },
+  "exclude": ["node_modules", "lib", "dist"],
+  "references": [
+    {
+      "path": "./packages/maindb"
+    }
+  ],
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}
