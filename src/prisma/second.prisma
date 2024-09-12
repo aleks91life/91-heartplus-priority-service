@@ -1,0 +1,125 @@
+model Interrogation {
+  id                 Int       @id @default(autoincrement())
+  type               String
+  data               Json
+  createdAt          DateTime  @default(now())
+  reviewedAt         DateTime?
+  updatedAt          DateTime  @updatedAt
+  isReviewed         Boolean   @default(false)
+  overriddenPriority Float?
+  overrideReason     String?
+  PriorityDetail PriorityDetail[]
+  Priority Priority[]
+}
+
+model FilterGroup {
+    id              Int           @id @default(autoincrement())
+    name            String
+    description     String?
+    filters         Filter[]
+    parentGroup     FilterGroup?  @relation("ChildGroups", fields: [parentGroupId], references: [id])
+    parentGroupId   Int?
+    childGroups     FilterGroup[] @relation("ChildGroups")
+}
+
+model Filter {
+    id              Int           @id @default(autoincrement())
+    name            String
+    description     String?
+    field           String
+    operator        String
+    value           String
+    filterGroup     FilterGroup   @relation(fields: [filterGroupId], references: [id])
+    filterGroupId   Int
+    filterOperators FilterOperator[]   
+}
+
+model FilterOperator {
+    id              Int           @id @default(autoincrement())
+    name            String
+    description     String?
+    operator        String
+    filters         Filter[]
+    filterValues    FilterOperatorValues[]
+}
+
+model FilterOperatorValues {
+    id              Int           @id @default(autoincrement())
+    value           String
+    filterOperator  FilterOperator @relation(fields: [filterOperatorId], references: [id])
+    filterOperatorId Int
+}
+
+model RulesGroup {
+    id              Int           @id @default(autoincrement())
+    name            String
+    description     String?
+    rules           Rule[]
+    parentGroup     RulesGroup?  @relation("ChildGroups", fields: [parentGroupId], references: [id])
+    parentGroupId   Int?
+    childGroups     RulesGroup[] @relation("ChildGroups")
+    doctorSpecific  Boolean
+    doctor Doctor[]
+}
+
+model Rule {
+    id              Int           @id @default(autoincrement())
+    name            String
+    description     String?
+    ruleType        String
+    minValue        Float?
+    maxValue        Float?
+    filterField     String?
+    rulesGroup      RulesGroup    @relation(fields: [rulesGroupId], references: [id])
+    rulesGroupId    Int
+    priorityValue   Float
+    pacientSpecific Boolean
+    priority        Priority[]
+    patients        Patient[]
+    PriorityDetail PriorityDetail[]
+}
+
+model Patient {
+    id              Int           @id @default(autoincrement())
+    name            String
+    rules           Rule[]
+
+    Doctor Doctor[]
+}
+
+model Doctor {
+    id              Int           @id @default(autoincrement())
+    name            String
+    rulesGroups     RulesGroup[]
+    patients        Patient[]
+}
+
+model Priority {
+    id              Int           @id @default(autoincrement())
+    rule            Rule          @relation(fields: [ruleId], references: [id])
+    ruleId          Int
+    interrogation   Interrogation @relation(fields: [interrogationId], references: [id])
+    interrogationId Int
+    value           Float
+    priorityLevel   String
+    explanation     String
+    calculatedAt    DateTime      @default(now())
+    createdAt       DateTime      @default(now())
+    updatedAt       DateTime      @updatedAt
+    priorityDetails PriorityDetail[]
+}
+
+model PriorityDetail {
+    id              Int           @id @default(autoincrement())
+    priority        Priority      @relation(fields: [priorityId], references: [id])
+    priorityId      Int
+    rule            Rule          @relation(fields: [ruleId], references: [id])
+    ruleId          Int
+    interrogation   Interrogation @relation(fields: [interrogationId], references: [id])
+    interrogationId Int
+    field           String
+    value           Float
+    conditionMet    Boolean
+    createdAt       DateTime      @default(now())
+}
+

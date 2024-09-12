@@ -1,0 +1,55 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Interrogation {
+  id                 Int       @id @default(autoincrement())
+  type               String
+  data               Json
+  createdAt          DateTime  @default(now())
+  reviewedAt         DateTime?
+  updatedAt          DateTime  @updatedAt
+  isReviewed         Boolean   @default(false)
+  overriddenPriority Float?
+  overrideReason     String?
+  priorityDetails    Json?
+  priority           Float?
+  calculatedPriority Boolean   @default(false)
+  calculatedAt       DateTime?
+
+  RulesDetails RulesDetails[]
+}
+
+model Rules {
+  id              String   @id @default(cuid())
+  hospitalId      String?
+  type            String
+  name            String
+  description     String?
+  data            Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  active          Boolean  @default(true)
+  patientSpecific Boolean  @default(false)
+  patientId       String?
+  priority        Float?
+
+  RulesDetails RulesDetails[]
+}
+
+model RulesDetails {
+  id              Int           @id @default(autoincrement())
+  rule            Rules         @relation(fields: [ruleId], references: [id])
+  ruleId          String
+  interrogation   Interrogation @relation(fields: [interrogationId], references: [id])
+  interrogationId Int
+  episodeId       String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  reason          String?
+}
