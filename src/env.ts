@@ -6,6 +6,7 @@ const env = {
     ISTEST: process.env.NODE_ENV === 'test',
     ISSTAGING: process.env.NODE_ENV === 'qa' || process.env.NODE_ENV === 'staging',
     ISPROD: process.env.NODE_ENV === 'production',
+    DB: process.env.DB_URL || 'postgres://postgres:postgres@localhost:5432/HeartPlus',
 };
 
 export default env;

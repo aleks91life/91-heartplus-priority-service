@@ -1,0 +1,54 @@
+datasource db {
+  url      = "postgresql://postgres:12345@localhost:5432/HeartPlus"
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model PriorityRules {
+  id String @id @default(cuid())
+  user String
+  type String
+  name String
+  description String
+  rules Json
+  patientRules Json
+  interrogationRules Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status String @default("ACTIVE")
+  patientSpecific Boolean @default(false)
+  priority String
+  parentId           String?      
+  parent             PriorityRules?   @relation("PriorityRuleHierarchy", fields: [parentId], references: [id])
+  children PriorityRules[] @relation("PriorityRuleHierarchy")
+  priorityCalculations PriorityCalculations[]
+}
+
+model Interrogation {
+  id Int @id @default(autoincrement())
+  type String
+  data Json
+  createdAt DateTime @default(now())
+  reviewedAt DateTime
+  updatedAt DateTime @updatedAt
+  isReviewed Boolean @default(false)
+  priority String?
+  priorityCalculations PriorityCalculations[]
+}
+
+model PriorityCalculations {
+  id Int @id @default(autoincrement())
+  ruleId            String
+  interrogationId   Int
+  priorityRules     PriorityRules     @relation(fields: [ruleId], references: [id])
+  interrogation     Interrogation     @relation(fields: [interrogationId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reason String
+}
+
+
+
