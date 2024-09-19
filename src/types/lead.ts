@@ -70,6 +70,7 @@ const thresholdLead: InterpretRule<LeadThresholdRule> = async function (
     min: parseFloat(rule.data.valueRange.pulseWidth_min!) || MIN_VALUE,
     max: parseFloat(rule.data.valueRange.pulseWidth_max!) || MAX_VALUE,
   };
+  const issues: { field_name: string[]; value: number }[] = [];
   const affected = interrogations
     ?.filter(notEmpty)
     .map((interrogation) => {
@@ -77,7 +78,6 @@ const thresholdLead: InterpretRule<LeadThresholdRule> = async function (
         if (!interrogation || !interrogation.measurements) {
           return null;
         }
-        const issues: { field_name: string[]; value: number }[] = [];
 
         const affectedIDs = (
           interrogation.measurements!.leadChannelMeasurements || []
@@ -188,10 +188,10 @@ const impedanceLead: InterpretRule<LeadImpedanceRule> = async function (
       ? rule.data.valueRange.polarity
       : [rule.data.valueRange.polarity]
   ).filter(notEmpty);
+  const issues: { field_name: string[]; value: any }[] = [];
   const affected = interrogations
     ?.filter(notEmpty)
     .map((interrogation) => {
-      const issues: { field_name: string[]; value: any }[] = [];
       try {
         if (!interrogation || !interrogation.measurements) {
           return null;

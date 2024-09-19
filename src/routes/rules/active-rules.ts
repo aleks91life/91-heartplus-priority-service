@@ -3,7 +3,10 @@ import fastify, { FastifyPluginCallback } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { InputJsonValue } from "@prisma/client/runtime/library";
 import { parseRange } from "../../helpers/parse-range";
-import { RangeParams } from "../../types";
+import {
+  getAllActiveRulesFromUserId,
+  getAllActiveRulesFromUserIdWithType,
+} from "../../services/interrogation/rulesService";
 
 interface Params {
   id: string;
@@ -19,19 +22,7 @@ export default fp(async (server) => {
     async (request, reply) => {
       try {
         const { id } = request.params;
-
-        // const data2 = parseRange(range) as RangeParams;
-        // const page = data2.page;
-        // const perPage = data2.perPage;
-
-        const rules = await prisma.rules.findMany({
-          where: {
-            active: true,
-            // hospitalId: id,
-          },
-          //   take: perPage,
-          //   skip: (page - 1) * perPage,
-        });
+        const rules = await getAllActiveRulesFromUserId(id);
         return reply.send(rules);
       } catch (error) {
         server.log.error(error);
@@ -47,13 +38,7 @@ export default fp(async (server) => {
     async (request, reply) => {
       try {
         const { id, type } = request.params;
-        const rules = await prisma.rules.findMany({
-          where: {
-            active: true,
-            hospitalId: id,
-            type: type,
-          },
-        });
+        const rules = await getAllActiveRulesFromUserIdWithType(id, type);
         return reply.send(rules);
       } catch (error) {
         server.log.error(error);

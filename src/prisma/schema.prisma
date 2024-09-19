@@ -26,18 +26,22 @@ model Interrogation {
 }
 
 model Rules {
-  id              String   @id @default(cuid())
-  hospitalId      String?
-  type            String
-  name            String
-  description     String?
-  data            Json
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  active          Boolean  @default(true)
-  patientSpecific Boolean  @default(false)
-  patientId       String?
-  priority        Float?
+  id        String  @id @default(cuid())
+  userId    String?
+  patientId String?
+
+  type        String
+  name        String
+  description String?
+
+  patientRules       Json
+  interrogationRules Json
+  rules              Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean  @default(true)
+  priority  Float?
 
   RulesDetails RulesDetails[]
 }

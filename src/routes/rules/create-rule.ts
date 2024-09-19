@@ -1,34 +1,25 @@
 import fp from "fastify-plugin";
-import fastify, { FastifyPluginCallback } from "fastify";
-import { PrismaClient } from "@prisma/client";
 import { InputJsonValue } from "@prisma/client/runtime/library";
+import { createRule } from "../../services/interrogation/rulesService";
 
 interface Params {
   id: string;
 }
 
 export default fp(async (server) => {
-  const prisma = new PrismaClient();
-
   server.post("/rules", async (request, reply) => {
     const body = request.body as {
       name: string;
       type: string;
       description: string;
-      hospitalId: string;
-      data: InputJsonValue;
+      userId: string;
+      patientRules: InputJsonValue;
+      interrogationRules: InputJsonValue;
+      rules: InputJsonValue;
     };
-    const { name, type, description, hospitalId, data } = body;
+    const { userId } = body;
     try {
-      const rule = await prisma.rules.create({
-        data: {
-          name,
-          type,
-          description,
-          hospitalId,
-          data,
-        },
-      });
+      const rule = await createRule(body, userId);
       return reply.send(rule);
     } catch (error) {
       server.log.error(error);

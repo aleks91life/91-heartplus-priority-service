@@ -179,7 +179,7 @@ export interface LeadHVImpedanceRule extends RuleBasic {
   };
 }
 
-export interface StelRule extends RuleBasic {
+interface StelRule extends RuleBasic {
   type: "stel";
   data: {
     filters: RuleBasic["data"]["filters"];
@@ -215,16 +215,16 @@ export type RuleObject =
   | OtherRule
   | StelRule;
 
-export interface FilterRow {
-  fieldName?: string[];
-  operator?: "between" | " " | "_gt" | "_lt" | "_not";
-  value?: string;
-}
+// export interface FilterRow {
+//   fieldName?: string[];
+//   operator?: "between" | " " | "_gt" | "_lt" | "_not";
+//   value?: string;
+// }
 
-export interface FilterRule {
-  qualifier: "any" | "all";
-  searchState: FilterRow[];
-}
+// export interface FilterRule {
+//   qualifier: "any" | "all";
+//   searchState: FilterRow[];
+// }
 
 type RuleCalculation = {
   ruleID: string;

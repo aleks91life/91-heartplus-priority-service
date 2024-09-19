@@ -4,9 +4,10 @@ import blipp from "fastify-blipp";
 import env from "./env";
 import { logger } from "./utils";
 import { validateRequest } from "./utils/auth";
-import interrogationRequestRoute from "./routes/interrogation/interrogation";
+import interrogationRequestRoute from "./routes/interrogation/calculate-priority";
 import formBody from "@fastify/formbody";
-import path from "path";
+
+let time1 = performance.now();
 
 const server: FastifyInstance = fastify();
 
@@ -44,10 +45,12 @@ server.get("/", async () => {
 });
 
 server.register(interrogationRequestRoute);
-server.register(import("./routes/interrogation/battery-data"));
 server.register(import("./routes/rules/active-rules"));
 server.register(import("./routes/rules/all-rules"));
 server.register(import("./routes/rules/create-rule"));
+server.register(import("./routes/rules/update-rule"));
+server.register(import("./routes/rules/delete-rule"));
+
 server.register(import("./routes/interrogation/all-interrogations"));
 
 console.log("[*] Preparing to start server");
@@ -55,7 +58,7 @@ console.log("[*] Preparing to start server");
 const start = async (PORT: number | string) => {
   try {
     console.log("[*] Starting server");
-    await server.listen(PORT, "0.0.0.0");
+    await server.listen({ port: Number(PORT), host: "0.0.0.0" });
     console.log(
       `[*] Server started and running on port http://localhost:${PORT}`
     );
@@ -80,8 +83,15 @@ process.on("unhandledRejection", (error) => {
 });
 
 if (require.main === module) {
+  let time2 = performance.now();
   start(env.PORT).then((r) =>
-    logger.log("[*] Server started and running on port " + env.PORT)
+    logger.log(
+      "[*] Server started and running on port " +
+        env.PORT +
+        " in " +
+        Math.floor(time2 - time1).toFixed(2) +
+        "ms"
+    )
   );
 }
 
