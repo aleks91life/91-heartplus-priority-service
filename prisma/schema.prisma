@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model PriorityRule {
+  id                 String    @id @default(uuid())
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  type               String
+  priority           Int
+  patientRules       Json
+  interrogationRules Json
+  rules              Json
+  status             String   @default("active")
+  user               String?   
+  cloneId            String?   // Foreign key field for the self-referencing relation
+  clone              PriorityRule? @relation("CloneRule", fields: [cloneId], references: [id])
+  clonedBy           PriorityRule[] @relation("CloneRule")
+  tags               Json?
+
+
+  // Add the inverse relation to IPCalculation
+  IPCalculations     IPCalculation[]
+}
+
+
+model IPCalculation {
+  id            String   @id @default(uuid())
+  ruleId        String
+  transsmitionId String
+  cause         String
+  status        String
+  PriorityRule  PriorityRule @relation(fields: [ruleId], references: [id])
+
+  @@index([ruleId])
+}
