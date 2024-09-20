@@ -1,17 +1,24 @@
 {
-    "extends": "./parent-tsconfig.json",
-    "compilerOptions": {
-        "composite": true,
-        "rootDir": "src",
-        "outDir": "dist",
-        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
-    },
-    "include": [
-        "src/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        "**/__tests__"
-    ]
+  "compilerOptions": {
+    "target": "ES2015",                      // Specify ECMAScript target version: ES2015 or later
+    "module": "commonjs",                    // Specify module code generation: "commonjs"
+    "outDir": "./dist",                      // Redirect output structure to the directory: "dist"
+    "rootDir": "./src",                      // Specify the root directory of input files
+
+    /* Add this to fix the 'Promise' issue */
+    "lib": ["ES2015", "DOM"],                // Include standard libraries for ECMAScript and DOM (for Node.js)
+
+    /* Strict Type-Checking Options */
+    "strict": true,                          // Enable all strict type-checking options
+    "noImplicitAny": true,                   // Raise error on expressions and declarations with an implied "any" type
+    "strictNullChecks": true,                // Enable strict null checks
+    "strictPropertyInitialization": true,    // Ensure non-undefined class properties are initialized
+
+    /* Module Resolution Options */
+    "esModuleInterop": true,                 // Enable interoperability between CommonJS and ES Modules
+    "skipLibCheck": true,                    // Skip type checking of declaration files (can improve compile times)
+    "forceConsistentCasingInFileNames": true // Disallow inconsistently-cased references to the same file
+  },
+  "include": ["src/**/*"],                   // Include all .ts files in the "src" directory
+  "exclude": ["node_modules", "dist"]        // Exclude generated files and dependencies
 }

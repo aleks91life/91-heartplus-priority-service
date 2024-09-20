@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:postgres@localhost:5432/rulePriority"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model PriorityRule {
+  id               String   @id @default(uuid())
+  patientRules     Json?
+  interrogationRules Json?
+  rules            Json
+  type             String
+  userId           String
+  status           String
+  parentId         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  priority         String
+}
+
+model InterrogationPriorityCalculation {
+  id              String   @id @default(uuid())
+  ruleId          String
+  transmissionId  String
+  cause           String
+  status          String
+  createdAt       DateTime @default(now())
+}
