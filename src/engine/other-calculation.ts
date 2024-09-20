@@ -37,9 +37,6 @@ export function calculateOtherPriority(
       }
     }
 
-    if (rule.interrogationRules) {
-    }
-
     const calculatedPriority = rulePassed ? rule.priority ?? 0 : 0;
 
     return {

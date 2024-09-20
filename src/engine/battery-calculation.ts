@@ -3,7 +3,7 @@ import { InterrogationRequestType, Rule } from "../types";
 import { MDC_IDC_ENUM_BATTERY_STATUS } from "../types/enums";
 import { RuleCalculation, transformRanges, ValueInterval } from "./core";
 
-interface BatteryRanges {
+export interface BatteryRanges {
   impedance: ValueInterval;
   voltage: ValueInterval;
   remainingPercentage: ValueInterval;
@@ -36,51 +36,53 @@ export function calculateBatteryPriority(
         });
       }
 
-      return rangeKeys.every((key) => {
+      return rangeKeys.some((key) => {
         const value = battery[key];
         const range = ranges[key];
 
-        if (!(key in battery)) {
-          return false;
-        }
-
-        if (value === undefined || value === null) {
+        if (!(key in battery) || value === undefined || value === null) {
+          // issues.push({
+          //   field_path: [key],
+          //   message: `${key} is missing or null/undefined`,
+          // });
           return false;
         }
 
         const numValue = Number(value);
 
+        if (!Number.isFinite(numValue)) {
+          issues.push({
+            field_path: [key],
+            message: `${key} is not a valid number`,
+          });
+          return true; // This counts as an issue
+        }
+
         if (numValue < range.min) {
           issues.push({
             field_path: [key],
-            message:
-              "Value is smaller than the minimum range " +
-              range.min +
-              " it is " +
-              numValue,
+            message: `${key} is smaller than the minimum range ${range.min}, it is ${numValue}`,
           });
-        } else if (numValue > range.max) {
-          issues.push({
-            field_path: [key],
-            message:
-              "Value exceeds the maximum range " +
-              range.max +
-              " it is " +
-              numValue,
-          });
+          return true; // This counts as an issue
         }
 
-        return !(
-          Number.isFinite(numValue) &&
-          (!Number.isFinite(range.min) || numValue >= range.min) &&
-          (!Number.isFinite(range.max) || numValue <= range.max)
-        );
+        if (numValue > range.max) {
+          issues.push({
+            field_path: [key],
+            message: `${key} exceeds the maximum range ${range.max}, it is ${numValue}`,
+          });
+          return true; // This counts as an issue
+        }
+
+        return false; // No issues found for this key
       });
     })
     .map((battery) => battery.date);
 
   const calculatedPriority =
-    affectedMeasurements.length > 0 ? rule.priority ?? 0 : 0;
+    affectedMeasurements.length > 0 || issues.length > 0
+      ? rule.priority ?? 0
+      : 0;
 
   return {
     ruleID: rule.id,

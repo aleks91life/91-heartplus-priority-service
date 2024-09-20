@@ -57,7 +57,7 @@ async function startCalculatingPriority(
           for (let item of data) {
             const priority = calculateOtherPriority(item, rul);
             if (priority && priority.priority > 0) {
-              priorityA.push(priority);
+              //priorityA.push(priority);
             }
           }
         }
@@ -97,8 +97,8 @@ export async function calculatePriority(
     const affectedRules = results.map((rule) => rule.ruleID);
 
     return {
-      affectedRules: affectedRules,
       finalPriority: minPriority,
+      affectedRules: affectedRules,
       results: results,
     };
   } catch (e: any) {
