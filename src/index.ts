@@ -5,6 +5,7 @@ import env from './env';
 import { logger } from './utils';
 import { validateRequest } from './utils/auth';
 import interrogationRequestRoute from './routes/interrogationRequest';
+import priorityRuleRoutes from './routes/priorityRuleRoutes';
 import formBody from '@fastify/formbody';
 
 const server: FastifyInstance = fastify();
@@ -12,19 +13,19 @@ const server: FastifyInstance = fastify();
 server.register(blipp);
 server.register(formBody);
 
-server.addHook('preHandler', async (request, reply) => {
-    let authorizationHeader: string | undefined = request.headers?.authorization;
+// server.addHook('preHandler', async (request, reply) => {
+//     let authorizationHeader: string | undefined = request.headers?.authorization;
 
-    let authorizationToken: string | undefined = undefined;
-    if(authorizationHeader) {
-        authorizationToken = authorizationHeader.replace('Basic ', '');
-    }
+//     let authorizationToken: string | undefined = undefined;
+//     if(authorizationHeader) {
+//         authorizationToken = authorizationHeader.replace('Basic ', '');
+//     }
 
-    if (!authorizationToken) {
-        return reply.status(401).send('Unauthorized!');
-    }
-    await validateRequest(request);
-});
+//     if (!authorizationToken) {
+//         return reply.status(401).send('Unauthorized!');
+//     }
+//     await validateRequest(request);
+// });
 
 server.get('/', async () => {
     return {
@@ -33,6 +34,7 @@ server.get('/', async () => {
 });
 
 server.register(interrogationRequestRoute);
+server.register(priorityRuleRoutes); // Register the priority rule routes
 
 const start = async (PORT: number | string) => {
     try {
