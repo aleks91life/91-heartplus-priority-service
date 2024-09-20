@@ -1,7 +1,8 @@
 import fp from 'fastify-plugin';
-import { PriorityRule, PriorityRuleType, PartialPriorityRule } from '../types';
-import { createPriorityRule, deleteRule, getActivePriorityRules, updateRule } from '../data/priorityRulesQueries';
+import { PriorityRule, PriorityRuleType, PartialPriorityRule, Status } from '../types';
+import { createPriorityRule, deleteRule, getActivePriorityRules, updateRule, getRuleById } from '../data/priorityRulesQueries';
 import { FastifyPluginCallback } from 'fastify';
+import { getPriority } from 'os';
 
 export default fp(async (server, opts) => {
     server.route<{ Body: PriorityRuleType }>({
@@ -53,7 +54,28 @@ export default fp(async (server, opts) => {
           const { ruleId } = request.params;
           const updatedData = request.body;
           try {
-            await updateRule(ruleId, updatedData);
+              const oldRule = await getRuleById(ruleId);
+          
+              if (!oldRule) {
+                throw new Error('Rule not found');
+              }
+              const newRuleData = {
+                user: updatedData.user ?? oldRule.user,
+                type: updatedData.type ?? oldRule.type,
+                name: updatedData.name ?? oldRule.name,
+                description: updatedData.description ?? oldRule.description,
+                rules: updatedData.rules ?? oldRule.rules,
+                patientRules: updatedData.patientRules ?? oldRule.patientRules,
+                interrogationRules: updatedData.interrogationRules ?? oldRule.interrogationRules,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                status: Status.active,
+                patientSpecific: updatedData.patientSpecific ?? oldRule.patientSpecific,
+                priority: updatedData.priority ?? oldRule.priority,
+                parentId: ruleId, 
+              };
+          
+            await updateRule(ruleId, newRuleData);
             return reply.status(200).send({ message: 'Rule updated successfully' });
           } catch (e: any) {
             server.log.error('Error updating priority rule', e);

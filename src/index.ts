@@ -7,6 +7,7 @@ import { validateRequest } from './utils/auth';
 import interrogationRequestRoute from './routes/interrogationRequest';
 import formBody from '@fastify/formbody';
 import priorityRules from './routes/priorityRules';
+import priorityCalculationRoute from './routes/calculatePriorityRoute';
 
 const server: FastifyInstance = fastify();
 
@@ -37,6 +38,7 @@ server.get('/', async () => {
 
 server.register(interrogationRequestRoute);
 server.register(priorityRules);
+server.register(priorityCalculationRoute)
 const start = async (PORT: number | string) => {
     try {
         await server.listen(PORT, '0.0.0.0');
