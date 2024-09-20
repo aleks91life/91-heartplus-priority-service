@@ -6,7 +6,7 @@ import { IPCService } from '../services/ipcService'; // Using IPCService to log 
 // POST process transmission and trigger priorities
 export const processTransmission = async (req: Request, res: Response) => {
     try {
-        const result = await RuleService.processTransmission(req.body); // Calls RuleService to evaluate rules
+        const result = await RuleService.processTransmissions(req.body); // Calls RuleService to evaluate rules
         res.json(result); // Returns the evaluated result (priority triggered and reasons)
     } catch (error) {
         console.error('Error processing transmission:', error);
