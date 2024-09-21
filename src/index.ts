@@ -6,6 +6,8 @@ import { logger } from './utils';
 import { validateRequest } from './utils/auth';
 import interrogationRequestRoute from './routes/interrogationRequest';
 import formBody from '@fastify/formbody';
+import priorityRoutes from './routes/priorityRoutes';
+import interrogationPriorityCalculationRoutes from './routes/interrogationPriorityCalculationRoutes';
 
 const server: FastifyInstance = fastify();
 
@@ -20,9 +22,9 @@ server.addHook('preHandler', async (request, reply) => {
         authorizationToken = authorizationHeader.replace('Basic ', '');
     }
 
-    if (!authorizationToken) {
+   /* if (!authorizationToken) {
         return reply.status(401).send('Unauthorized!');
-    }
+    }*/
     await validateRequest(request);
 });
 
@@ -33,6 +35,8 @@ server.get('/', async () => {
 });
 
 server.register(interrogationRequestRoute);
+server.register(priorityRoutes);
+server.register(interrogationPriorityCalculationRoutes);
 
 const start = async (PORT: number | string) => {
     try {

@@ -1,0 +1,53 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Priority {
+  id                     String                          @id @default(uuid())
+  patient_rules          Json?
+  interrogation_rules   Json
+  rules                  Json
+  type                   String
+  user                   String
+  status                 Status
+  parent                 String?
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+  priority               PriorityLevel
+
+  InterrogationPriorityCalculations InterrogationPriorityCalculation[]
+
+  @@index([user])
+}
+
+enum Status {
+  ACTIVE
+  DEACTIVE
+}
+
+enum PriorityLevel {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+
+// schema.prisma
+
+model InterrogationPriorityCalculation {
+  id             String   @id @default(uuid())
+  transmission_id String
+  rule_id        String
+  cause          String
+  status         Status
+  highestPriority String
+  
+  priority       Priority @relation(fields: [rule_id], references: [id])
+  
+  @@index([rule_id])
+}
