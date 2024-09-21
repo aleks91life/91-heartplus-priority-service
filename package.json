@@ -18,8 +18,11 @@
         "test": "jest"
     },
     "dependencies": {
+        "@arhm/priority-service": "file:",
         "@fastify/formbody": "^6.0.1",
+        "@prisma/client": "^5.19.1",
         "@sinclair/typebox": "^0.23.5",
+        "bson": "4.2.0",
         "debug": "^4.3.3",
         "fastify": "^3.29.5",
         "fastify-blipp": "^3.1.0",
@@ -37,6 +40,7 @@
         "jest-deep-contains": "^0.1.0",
         "nodemon": "^2.0.15",
         "pino-pretty": "^7.2.0",
+        "prisma": "^5.19.1",
         "ts-jest": "^29.2.5",
         "ts-node": "^10.8.1",
         "typescript": "^5.5.4"
