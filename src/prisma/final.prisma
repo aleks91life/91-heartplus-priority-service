@@ -1,0 +1,26 @@
+model Interrogation {
+    id                 Int       @id @default(autoincrement())
+    type               String
+    data               Json
+    createdAt          DateTime  @default(now())
+    reviewedAt         DateTime?
+    updatedAt          DateTime  @updatedAt
+    isReviewed         Boolean   @default(false)
+    overriddenPriority Float?
+    overrideReason     String?
+    priorityDetails    Json?
+    priority           Float?
+    calculatedPriority Boolean   @default(false)
+    calculatedAt       DateTime?
+}
+
+model Rules {
+    id          String   @id @default(cuid())
+    hospitalId  String?  @unique
+    name        String
+    description String?
+    data        Json
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    active      Boolean  @default(true)
+}
